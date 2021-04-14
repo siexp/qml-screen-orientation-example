@@ -12,12 +12,30 @@ Window {
 
     title: qsTr("Hello World")
 
-    Rectangle {
-        width: Screen.width / 2
-        height: Screen.height / 2
-        anchors.centerIn: parent
+    StackView {
+        id: stack
+        anchors.fill: parent
+    }
 
-        color: "green"
+    Component {
+        id: green
+        Rectangle {
+            anchors.fill: parent
+
+            color: "green"
+
+            Component.onDestruction: console.log("dtr green")
+        }
+    }
+    Component {
+        id: blue
+        Rectangle {
+            anchors.fill: parent
+
+            color: "blue"
+
+            Component.onDestruction: console.log("dtr blue")
+        }
     }
 
     Text {
@@ -50,13 +68,26 @@ Window {
 
     Button {
         anchors.bottom: parent.bottom
-        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.left: parent.left
 
-        text: "Rotate"
+        text: "landscape"
         font.pointSize: 32
         onClicked: {
-            Screen.primaryOrientation === Qt.PortraitOrientation ? AndroidInterface.landscape()
-                                                                 : AndroidInterface.portrait()
+            stack.pop()
+            stack.push(green)
+            AndroidInterface.landscape()
+        }
+    }
+    Button {
+        anchors.bottom: parent.bottom
+        anchors.right: parent.right
+
+        text: "portrait"
+        font.pointSize: 32
+        onClicked: {
+            stack.pop()
+            stack.push(blue)
+            AndroidInterface.portrait()
         }
     }
 }
